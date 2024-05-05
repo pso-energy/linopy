@@ -638,6 +638,11 @@ def run_gurobi(
                 "Keyword argument `io_api` has to be one of `lp`, `mps`, `direct` or None"
             )
 
+        callback = None
+        if "callback" in solver_options:
+            callback = solver_options["callback"]
+            del solver_options["callback"]
+
         if solver_options is not None:
             for key, value in solver_options.items():
                 m.setParam(key, value)
@@ -646,7 +651,7 @@ def run_gurobi(
 
         if warmstart_fn:
             m.read(warmstart_fn)
-        m.optimize()
+        m.optimize(callback=callback)
 
         if basis_fn:
             try:
